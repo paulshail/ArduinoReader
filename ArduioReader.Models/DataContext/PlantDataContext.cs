@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,9 +33,8 @@ namespace ArduinoReader.Models.DataContext
 
         public PlantDataContext(DbContextOptions<PlantDataContext> options) : base(options) { }
 
-        public PlantDataContext() { }
 
-
+        #endregion
 
         #region Config
 
@@ -42,5 +42,7 @@ namespace ArduinoReader.Models.DataContext
         {
             base.OnModelCreating(builder);
         }
+
+        #endregion
     }
 }

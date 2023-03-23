@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ArduinoReader": {
+      "commandName": "Project",
+      "commandLineArgs": "-config Test"
+    }
+  }
+}
