@@ -17,7 +17,30 @@ namespace ArduinoReader.Models.DataContext
         public DbSet<Cluster> Cluster { get; init; }
         public DbSet<ClusterCrop> ClusterCrops { get; init; }
         public DbSet<ClusterData> ClusterData { get; init; }
+        public DbSet<ClusterDataType> ClusterDataType { get; init; }
+        public DbSet<ClusterLocation> ClusterLocation { get; init; }
+        public DbSet<ClusterSoil> ClusterSoils { get; init; }
+        public DbSet<MeasurementUnit> MeasurementUnit { get; init; }
+        public DbSet<Sensor> Sensor { get; init; }
+        public DbSet<SensorCluster> SensorCluster { get; init; }
+        public DbSet<SensorMeasurement> SensorMeasurement { get; init; }
+        public DbSet<SensorType> SensorType { get; init; }
 
         #endregion
+
+        #region ctors
+
+        public PlantDataContext(DbContextOptions<PlantDataContext> options) : base(options) { }
+
+        public PlantDataContext() { }
+
+
+
+        #region Config
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
     }
 }
