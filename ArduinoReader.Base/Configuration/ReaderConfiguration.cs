@@ -4,20 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArduinoReader.Config
+namespace ArduinoReader.Base.Configuration
 {
-    public class ReaderConfig
+    public class ReaderConfiguration
     {
 
-        public ReaderConfig() { }
+        public ReaderConfiguration() { }
 
 
-        public ReaderConfig(string connectionString, string heartbeatFileLocation, string heartbeatFileName, double heartbeatInterval)
+        public ReaderConfiguration(string connectionString, string heartbeatFileLocation, string heartbeatFileName, int heartbeatInterval, string sensorReadingsFileLocation)
         {
             ConnectionString = connectionString;
             HeartbeatFileLocation = heartbeatFileLocation;
             HeartbeatFileName = heartbeatFileName;
             HeartbeatInterval = heartbeatInterval;
+            SensorReadingsFileLocation = sensorReadingsFileLocation;
         }
 
         public string ConnectionString { get; set; }
@@ -26,7 +27,9 @@ namespace ArduinoReader.Config
 
         public string HeartbeatFileName { get; set; }
 
-        public double HeartbeatInterval { get; set; }
+        public int HeartbeatInterval { get; set; }
+
+        public string SensorReadingsFileLocation { get; set; }
 
     }
 }

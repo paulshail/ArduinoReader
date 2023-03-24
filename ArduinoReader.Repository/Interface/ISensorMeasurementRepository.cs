@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArduinoReader.Repository.Interface
 {
-    public interface ISensorMeasurementRepository
+    public interface ISensorMeasurementRepository : IDisposable
     {
 
         public Task<bool> AddFileToDatabase(DateTime dateOfMeasurement, double measurementValue, int SensorId, int MeasurementId);

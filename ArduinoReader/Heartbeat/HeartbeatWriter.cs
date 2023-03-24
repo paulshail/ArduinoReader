@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArduinoReader.Base.Configuration;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ArduinoReader.Heartbeat
 {
-    public class HeartbeatWriter
+    public class HeartbeatWriter : IHeartbeatWriter
     {
 
         #region vars
@@ -22,12 +23,12 @@ namespace ArduinoReader.Heartbeat
         #endregion
 
 
-        public HeartbeatWriter(int heartbeatInterval, string fileLocation, string fileName)
+        public HeartbeatWriter(ReaderConfiguration readerConfig)
         {
             // Convert minutes to milliseconds
-            _heartbeatInterval = heartbeatInterval * 60000;
-            _fileLocation = fileLocation;
-            _fileName = fileName;
+            _heartbeatInterval = readerConfig.HeartbeatInterval * 60000;
+            _fileLocation = readerConfig.HeartbeatFileLocation;
+            _fileName = readerConfig.HeartbeatFileName;
 
             _heartbeatWorker= new BackgroundWorker();
             _heartbeatWorker.DoWork += _heartbeatWorker_DoWork;
@@ -68,7 +69,7 @@ namespace ArduinoReader.Heartbeat
             _heartbeatWorker.CancelAsync();
         }
 
-        private void WriteHeartbeat()
+        public void WriteHeartbeat()
         {
 
             if(!File.Exists(_fileName))

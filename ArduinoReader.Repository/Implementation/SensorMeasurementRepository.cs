@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ArduinoReader.Repository.Implementation
 {
-    public class SensorMeasurementRepository : ISensorMeasurementRepository
+    public class SensorMeasurementRepository : ISensorMeasurementRepository 
     {
 
         private readonly PlantDataContext _plantDataContext;
@@ -40,6 +40,16 @@ namespace ArduinoReader.Repository.Implementation
             catch (Exception ex)
             {
                 return false;
+            }
+
+        }
+
+        public void Dispose()
+        {
+
+            if(_plantDataContext != null)
+            {
+                this._plantDataContext.Dispose();
             }
 
         }

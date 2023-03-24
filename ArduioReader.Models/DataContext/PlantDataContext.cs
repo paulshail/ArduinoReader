@@ -33,6 +33,7 @@ namespace ArduinoReader.Models.DataContext
 
         public PlantDataContext(DbContextOptions<PlantDataContext> options) : base(options) { }
 
+        //public PlantDataContext(string connString) : base(connString){}
 
         #endregion
 

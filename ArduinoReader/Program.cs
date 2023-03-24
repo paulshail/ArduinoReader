@@ -1,21 +1,22 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using ArduinoReader.Config;
+using ArduinoReader.Base.Configuration;
 using ArduinoReader.Heartbeat;
 using ArduinoReader.Sensor;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
 internal class Program
 {
 
-    public readonly static string _environmentTag;
+    public static string _environmentTag;
 
     private static IConfiguration _configuration;
 
     private static HeartbeatWriter _heartbeatWriter;
 
-    public static ReaderConfig ReaderConfig { get; private set; }
+    public static ReaderConfiguration ReaderConfig { get; private set; }
 
     private static SensorDataWriter _sensorDataWriter;
 
@@ -32,13 +33,30 @@ internal class Program
             return;
         }
 
+        Console.WriteLine(_configuration.GetConnectionString(_environmentTag));
+
+        // var serviceProvider = new ServiceCollection()
+        //   .AddSingleton<IHeartbeatWriter, HeartbeatWriter>()
+        // .AddSingleton<ISensorDataWriter, SensorDataWriter>()
+        //.BuildServiceProvider();
+
+        ReaderConfig = CreateReaderConfig();
+
+        if(ReaderConfig == null)
+        {
+            return;
+        }
+
         // Create both threads
         _heartbeatWriter = CreateHeartbeatWriter();
         _sensorDataWriter = CreateSensorDataWriter();
 
+        Console.WriteLine("------------------------");
+
         // Begin both threads
         _heartbeatWriter.StartHeartbeat();
         _sensorDataWriter.StartSensorDataReader();
+
 
         Console.WriteLine("Press any key to stop process...");
         Console.ReadKey();
@@ -47,13 +65,14 @@ internal class Program
 
     }
 
+    #region methods
+
     private static IConfiguration SetConfiguration()
     {
 
         var startupArgs = Environment.GetCommandLineArgs();
 
         string env = null;
-        string _environmentTag;
 
         for (int i = 0; i < startupArgs.Length; i++)
         {
@@ -82,12 +101,13 @@ internal class Program
         }
         else
         {
-            Console.WriteLine("Startup arguements set");
+            Console.WriteLine("Startup arguements found");
         }
 
         var configBuilder = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)
             .AddJsonFile(env, optional: false, reloadOnChange: false);
+
 
         try
         {
@@ -109,7 +129,7 @@ internal class Program
     public static HeartbeatWriter CreateHeartbeatWriter()
     {
         // Hardcoded to test
-        HeartbeatWriter heartbeatWriter = new HeartbeatWriter(1, "C:\\Users\\Paul\\EPOFiles\\Heartbeat", "C:\\Users\\Paul\\EPOFiles\\Heartbeat\\HeartbeatTest.txt");
+        HeartbeatWriter heartbeatWriter = new HeartbeatWriter(ReaderConfig);
 
 
         return heartbeatWriter;        
@@ -118,9 +138,35 @@ internal class Program
     public static SensorDataWriter CreateSensorDataWriter()
     {
 
-        SensorDataWriter sensorDataWriter = new SensorDataWriter("C:\\Users\\Paul\\EPOFiles\\SensorReadings");
+        SensorDataWriter sensorDataWriter = new SensorDataWriter(ReaderConfig);
 
         return sensorDataWriter;
     }
+
+    private static ReaderConfiguration CreateReaderConfig()
+    {
+        try
+        {
+
+            return new ReaderConfiguration {
+                ConnectionString = _configuration.GetConnectionString(_environmentTag),
+                HeartbeatFileLocation = _configuration.GetSection("HeartbeatFileLocation:" + _environmentTag).Value,
+                HeartbeatFileName = _configuration.GetSection("HeartbeatFileName:" + _environmentTag).Value,
+                HeartbeatInterval = int.Parse(_configuration.GetSection("HeartbeatInterval").Value),
+                SensorReadingsFileLocation = _configuration.GetSection("SensorReadingsFileLocation:" + _environmentTag).Value
+            };
+
+        }
+        catch 
+        {
+
+            Console.WriteLine("The configuration file contained an error.  Check the file then restart the application");
+            
+            return null;
+        } 
+    }
+
+    #endregion
+
 }
 

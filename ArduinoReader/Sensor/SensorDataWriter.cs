@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArduinoReader.Base.Configuration;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ArduinoReader.Sensor
 {
-    public class SensorDataWriter
+    public class SensorDataWriter : ISensorDataWriter
     {
 
         #region vars
@@ -18,10 +19,10 @@ namespace ArduinoReader.Sensor
 
         #endregion
 
-        public SensorDataWriter(string folderLocation)
+        public SensorDataWriter(ReaderConfiguration readerConfig)
         {
             
-            _folderLocation= folderLocation;
+            _folderLocation = readerConfig.SensorReadingsFileLocation;
 
             _sensorDataWriterWorker= new BackgroundWorker();
             _sensorDataWriterWorker.DoWork += _sensorDataWriterWorker_DoWork;
@@ -54,6 +55,15 @@ namespace ArduinoReader.Sensor
             _sensorDataWriterWorker.RunWorkerAsync();
         }
 
+        public void StopSensorDataReader()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteSensorDataToDatabase()
+        {
+            throw new NotImplementedException();
+        }
 
     }
 
