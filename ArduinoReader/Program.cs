@@ -153,7 +153,8 @@ internal class Program
                 HeartbeatFileLocation = _configuration.GetSection("HeartbeatFileLocation:" + _environmentTag).Value,
                 HeartbeatFileName = _configuration.GetSection("HeartbeatFileName:" + _environmentTag).Value,
                 HeartbeatInterval = int.Parse(_configuration.GetSection("HeartbeatInterval").Value),
-                SensorReadingsFileLocation = _configuration.GetSection("SensorReadingsFileLocation:" + _environmentTag).Value
+                SensorReadingsFileLocation = _configuration.GetSection("SensorReadingsFileLocation:" + _environmentTag).Value,
+                ErrorSensorReadingsFileLocation = _configuration.GetSection("ErrorSensorReadingFileLocation:" + _environmentTag).Value
             };
 
         }

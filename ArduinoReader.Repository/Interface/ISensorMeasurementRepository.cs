@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArduinoReader.Models.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace ArduinoReader.Repository.Interface
     public interface ISensorMeasurementRepository : IDisposable
     {
 
-        public Task<bool> AddFileToDatabase(DateTime dateOfMeasurement, double measurementValue, int SensorId, int MeasurementId);
+        public Task<bool> AddFileToDatabase(SensorMeasurementDTO sensorMeasurement);
 
     }
 }

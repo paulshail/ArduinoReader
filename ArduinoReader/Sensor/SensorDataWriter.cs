@@ -1,6 +1,10 @@
 ﻿using ArduinoReader.Base.Configuration;
+using ArduinoReader.Models.DataContext;
+using ArduinoReader.Models.DTOs;
+using ArduinoReader.Repository.Implementation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -13,7 +17,7 @@ namespace ArduinoReader.Sensor
 
         #region vars
 
-        private readonly string _folderLocation;
+        private readonly ReaderConfiguration _readerConfiguration;
 
         private readonly BackgroundWorker _sensorDataWriterWorker;
 
@@ -21,8 +25,8 @@ namespace ArduinoReader.Sensor
 
         public SensorDataWriter(ReaderConfiguration readerConfig)
         {
-            
-            _folderLocation = readerConfig.SensorReadingsFileLocation;
+
+            _readerConfiguration = readerConfig;
 
             _sensorDataWriterWorker= new BackgroundWorker();
             _sensorDataWriterWorker.DoWork += _sensorDataWriterWorker_DoWork;
@@ -41,9 +45,114 @@ namespace ArduinoReader.Sensor
         private void _sensorDataWriterWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
 
-            Console.Write("Simulating reading...");
+            IEnumerable<string> sensorReadings = new ObservableCollection<string>();
 
-            Console.WriteLine("All readings done!");
+            try
+            {
+                sensorReadings = Directory.GetFiles(_readerConfiguration.SensorReadingsFileLocation);            
+            }
+            catch
+            {
+                Console.WriteLine("There was an error opening the file");
+            }
+
+            // Check if ther
+            if(sensorReadings.Count() > 0) 
+            {
+
+                
+
+                foreach (string sensorReading in sensorReadings)
+                {
+
+                    bool errorInFile = false;
+
+                    try
+                    {
+                        using(StreamReader sr = new StreamReader(sensorReading))
+                        {
+
+                            
+
+                            while (!sr.EndOfStream)
+                            {
+                                string toAdd = sr.ReadLine();
+                                int lineCounter = 0;
+
+                                if (toAdd != null)
+                                {
+
+                                    string[] measurmentReading = toAdd.Split(',');
+
+                                    SensorMeasurementDTO? measurementReadings = ConvertToSensorMeasurementDTO(measurmentReading);
+
+                                    if (measurementReadings != null) {
+                                        //using (SensorMeasurementRepository sensorRepo = new SensorMeasurementRepository(new PlantDataContext())
+                                        //{
+
+                                        //}
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Unable to save reading in line: " + lineCounter + " to database of file: " + sensorReading);
+                                        errorInFile = true;
+                                    }
+                                }
+
+                                lineCounter++;
+
+
+
+                            }
+                        }
+
+
+                    }
+
+                    catch
+                    {
+                        Console.WriteLine("Error while reading file: " + sensorReading);
+                    }
+
+                    if (errorInFile)
+                    {
+                        try
+                        {
+
+                            string sensorDirectory = _readerConfiguration.SensorReadingsFileLocation + "\\" + sensorReading;
+                            string errorDirectory = _readerConfiguration.ErrorSensorReadingsFileLocation + "\\" + sensorReading;
+
+                            using (FileStream fs = File.Create(sensorDirectory))
+                            {
+                                if (!File.Exists(errorDirectory))
+                                {
+                                    File.Move(sensorDirectory, errorDirectory);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Error moving file: " + _readerConfiguration.SensorReadingsFileLocation + "\\"+ sensorReading + " Deleting the file");
+                            File.Delete(_readerConfiguration.SensorReadingsFileLocation + "\\" + sensorReading);
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+
+                
+
+            }
+            else
+            {
+                Console.WriteLine("No files to add to database");
+            }
+
+
+
+            
 
             Thread.Sleep(10000);
 
@@ -63,6 +172,33 @@ namespace ArduinoReader.Sensor
         public void WriteSensorDataToDatabase()
         {
             throw new NotImplementedException();
+        }
+
+        public SensorMeasurementDTO? ConvertToSensorMeasurementDTO(string[] readingToConvert)
+        {
+
+            if (readingToConvert.Length == 4) {
+
+                try
+                {
+                    SensorMeasurementDTO toReturn = new SensorMeasurementDTO
+                    {
+                        dateOfMeasurement = DateTime.Parse(readingToConvert[0].Trim()),
+                        measurementValue = Double.Parse(readingToConvert[1].Trim()),
+                        sensorId = int.Parse(readingToConvert[2].Trim()),
+                        measurementId = int.Parse((readingToConvert[3].Trim()))
+                    };
+
+                    return toReturn;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            return null;
+
         }
 
     }

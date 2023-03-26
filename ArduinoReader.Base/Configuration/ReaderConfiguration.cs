@@ -12,13 +12,14 @@ namespace ArduinoReader.Base.Configuration
         public ReaderConfiguration() { }
 
 
-        public ReaderConfiguration(string connectionString, string heartbeatFileLocation, string heartbeatFileName, int heartbeatInterval, string sensorReadingsFileLocation)
+        public ReaderConfiguration(string connectionString, string heartbeatFileLocation, string heartbeatFileName, int heartbeatInterval, string sensorReadingsFileLocation, string errorSensorReadingsFileLocation)
         {
             ConnectionString = connectionString;
             HeartbeatFileLocation = heartbeatFileLocation;
             HeartbeatFileName = heartbeatFileName;
             HeartbeatInterval = heartbeatInterval;
             SensorReadingsFileLocation = sensorReadingsFileLocation;
+            ErrorSensorReadingsFileLocation = errorSensorReadingsFileLocation;
         }
 
         public string ConnectionString { get; set; }
@@ -30,6 +31,8 @@ namespace ArduinoReader.Base.Configuration
         public int HeartbeatInterval { get; set; }
 
         public string SensorReadingsFileLocation { get; set; }
+
+        public string ErrorSensorReadingsFileLocation { get; set; }
 
     }
 }
