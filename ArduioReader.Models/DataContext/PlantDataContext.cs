@@ -12,6 +12,7 @@ namespace ArduinoReader.Models.DataContext
     public class PlantDataContext : DbContext
     {
 
+        private string _connString;
 
         #region Tables
 
@@ -33,6 +34,11 @@ namespace ArduinoReader.Models.DataContext
 
         public PlantDataContext(DbContextOptions<PlantDataContext> options) : base(options) { }
 
+        public PlantDataContext(string connString)
+        {
+            _connString = connString;
+        }
+
         #endregion
 
         #region Config
@@ -40,6 +46,11 @@ namespace ArduinoReader.Models.DataContext
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(_connString);
         }
 
         #endregion

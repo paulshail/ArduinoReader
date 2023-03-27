@@ -10,7 +10,7 @@ namespace ArduinoReader.Repository.Interface
     public interface ISensorMeasurementRepository : IDisposable
     {
 
-        public Task<bool> AddFileToDatabase(SensorMeasurementDTO sensorMeasurement);
+        public bool AddFileToDatabase(SensorMeasurementDTO sensorMeasurement);
 
     }
 }

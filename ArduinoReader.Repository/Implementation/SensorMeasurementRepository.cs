@@ -1,4 +1,5 @@
-﻿using ArduinoReader.Models.DataContext;
+﻿using ArduinoReader.Base.Configuration;
+using ArduinoReader.Models.DataContext;
 using ArduinoReader.Models.DTOs;
 using ArduinoReader.Models.Models;
 using ArduinoReader.Repository.Interface;
@@ -15,13 +16,15 @@ namespace ArduinoReader.Repository.Implementation
 
         private readonly PlantDataContext _plantDataContext;
 
-        public SensorMeasurementRepository(PlantDataContext plantDatContext)
+
+        public SensorMeasurementRepository(PlantDataContext plantDataContext)
         {
-            _plantDataContext = plantDatContext;
+            _plantDataContext = plantDataContext;
+
         }
 
 
-        public async Task<bool> AddFileToDatabase(SensorMeasurementDTO measurement)
+        public bool AddFileToDatabase(SensorMeasurementDTO measurement)
         {
 
             try
@@ -32,7 +35,7 @@ namespace ArduinoReader.Repository.Implementation
                     dateOfMeasurement = measurement.dateOfMeasurement,
                     FK_measurementUnit_Id = measurement.measurementId,
                     FK_sensor_Id= measurement.sensorId,
-                    measuermentValue= measurement.measurementValue
+                    measurementValue= measurement.measurementValue
                 });
 
                 _plantDataContext.SaveChangesAsync();

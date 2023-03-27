@@ -14,7 +14,7 @@ namespace ArduinoReader.Models.Models
         [Key]
         public int PK_sensorMeasurement_Id { get; init; }
 
-        public double measuermentValue { get; init; }
+        public double measurementValue { get; init; }
 
         public DateTime dateOfMeasurement { get; init; }
 

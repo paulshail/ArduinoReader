@@ -1,7 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ArduinoReader.Base.Configuration;
 using ArduinoReader.Heartbeat;
+using ArduinoReader.Models.DataContext;
 using ArduinoReader.Sensor;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
@@ -33,8 +35,8 @@ internal class Program
             return;
         }
 
-        Console.WriteLine(_configuration.GetConnectionString(_environmentTag));
-
+       
+        // DI for services, not used
         // var serviceProvider = new ServiceCollection()
         //   .AddSingleton<IHeartbeatWriter, HeartbeatWriter>()
         // .AddSingleton<ISensorDataWriter, SensorDataWriter>()

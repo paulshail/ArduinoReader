@@ -2,6 +2,7 @@
 using ArduinoReader.Models.DataContext;
 using ArduinoReader.Models.DTOs;
 using ArduinoReader.Repository.Implementation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -82,15 +83,24 @@ namespace ArduinoReader.Sensor
                                 if (toAdd != null)
                                 {
 
-                                    string[] measurmentReading = toAdd.Split(',');
+                                    string[] measurementReading = toAdd.Split(',');
 
-                                    SensorMeasurementDTO? measurementReadings = ConvertToSensorMeasurementDTO(measurmentReading);
+                                    SensorMeasurementDTO? measurementReadingDTO = ConvertToSensorMeasurementDTO(measurementReading);
 
-                                    if (measurementReadings != null) {
-                                        //using (SensorMeasurementRepository sensorRepo = new SensorMeasurementRepository(new PlantDataContext())
-                                        //{
+                                    if (measurementReadingDTO != null) {
+                                        using (SensorMeasurementRepository sensorRepo = new SensorMeasurementRepository(new PlantDataContext(_readerConfiguration.ConnectionString)))
+                                        {
+                                            bool addedToDatabase = sensorRepo.AddFileToDatabase(measurementReadingDTO);
 
-                                        //}
+                                            if (!addedToDatabase)
+                                            {
+                                                errorInFile = true;
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("File: " + sensorReading + " added to database");
+                                            }
+                                        }
                                     }
                                     else
                                     {
@@ -119,8 +129,12 @@ namespace ArduinoReader.Sensor
                         try
                         {
 
-                            string sensorDirectory = _readerConfiguration.SensorReadingsFileLocation + "\\" + sensorReading;
-                            string errorDirectory = _readerConfiguration.ErrorSensorReadingsFileLocation + "\\" + sensorReading;
+                            string[] fileName = sensorReading.Split("\\");
+
+                            string sensorDirectory = sensorReading;
+
+                            // Get just the file name to set the directory to move the file
+                            string errorDirectory = _readerConfiguration.ErrorSensorReadingsFileLocation + fileName[fileName.Length - 1];
 
                             using (FileStream fs = File.Create(sensorDirectory))
                             {
@@ -132,13 +146,17 @@ namespace ArduinoReader.Sensor
                         }
                         catch
                         {
-                            Console.WriteLine("Error moving file: " + _readerConfiguration.SensorReadingsFileLocation + "\\"+ sensorReading + " Deleting the file");
-                            File.Delete(_readerConfiguration.SensorReadingsFileLocation + "\\" + sensorReading);
+                            Console.WriteLine("Error moving file: " + sensorReading + " Deleting the file");
+                            File.Delete(sensorReading);
                         }
                     }
                     else
                     {
-
+                        // No errors in file, can be deleted
+                        Console.WriteLine("Deleting successfully read files");
+                        
+                        // Don't delete for now
+                        //File.Delete(sensorReading);
                     }
                 }
 

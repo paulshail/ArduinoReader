@@ -12,7 +12,7 @@ namespace ArduinoReader.Models.Models
         [Key]
         public int PK_clusterSoil_Id { get; init; }
 
-        public string clusterSoulType { get; init; }
+        public string clusterSoilType { get; init; }
 
 
     }
