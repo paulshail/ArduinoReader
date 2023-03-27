@@ -47,8 +47,16 @@ namespace ArduinoReader.Heartbeat
         {
             Console.Write("Writing heartbeat... ");
 
-            WriteHeartbeat();
+            try
+            {
 
+                WriteHeartbeat();
+
+            }
+            catch
+            {
+                Console.WriteLine("Heartbeat has fallen over!");
+            }
             Console.WriteLine("Heartbeat updated");
             // Sleep for a minute
             Thread.Sleep(_heartbeatInterval);

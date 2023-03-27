@@ -57,6 +57,7 @@ internal class Program
 
         // Begin both threads
         _heartbeatWriter.StartHeartbeat();
+        Thread.Sleep(500);
         _sensorDataWriter.StartSensorDataReader();
 
 
@@ -167,6 +168,14 @@ internal class Program
             
             return null;
         } 
+    }
+
+    static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
+    {
+        Console.WriteLine(e.ExceptionObject.ToString());
+        Console.WriteLine("Press Enter to continue");
+        Console.ReadLine();
+        Environment.Exit(1);
     }
 
     #endregion

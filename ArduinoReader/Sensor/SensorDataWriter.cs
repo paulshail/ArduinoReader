@@ -45,23 +45,54 @@ namespace ArduinoReader.Sensor
 
         private void _sensorDataWriterWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
+            Console.WriteLine("Checking for sensor readings...");
 
+            try
+            {
+
+                WriteSensorDataToDatabase();
+
+            }
+            catch
+            {
+                Console.WriteLine("Unexpected error while checking for sensor readings");
+            }
+
+            Console.WriteLine("Check complete");
+
+            Thread.Sleep(60000);
+
+        }
+
+
+        public void StartSensorDataReader()
+        {
+            _sensorDataWriterWorker.RunWorkerAsync();
+        }
+
+        public void StopSensorDataReader()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteSensorDataToDatabase()
+        {
             IEnumerable<string> sensorReadings = new ObservableCollection<string>();
 
             try
             {
-                sensorReadings = Directory.GetFiles(_readerConfiguration.SensorReadingsFileLocation);            
+                sensorReadings = Directory.GetFiles(_readerConfiguration.SensorReadingsFileLocation);
             }
             catch
             {
                 Console.WriteLine("There was an error opening the file");
             }
 
-            // Check if ther
-            if(sensorReadings.Count() > 0) 
+            // Check if there is any files
+            if (sensorReadings.Count() > 0)
             {
 
-                
+
 
                 foreach (string sensorReading in sensorReadings)
                 {
@@ -70,10 +101,10 @@ namespace ArduinoReader.Sensor
 
                     try
                     {
-                        using(StreamReader sr = new StreamReader(sensorReading))
+                        using (StreamReader sr = new StreamReader(sensorReading))
                         {
 
-                            
+
 
                             while (!sr.EndOfStream)
                             {
@@ -87,7 +118,8 @@ namespace ArduinoReader.Sensor
 
                                     SensorMeasurementDTO? measurementReadingDTO = ConvertToSensorMeasurementDTO(measurementReading);
 
-                                    if (measurementReadingDTO != null) {
+                                    if (measurementReadingDTO != null)
+                                    {
                                         using (SensorMeasurementRepository sensorRepo = new SensorMeasurementRepository(new PlantDataContext(_readerConfiguration.ConnectionString)))
                                         {
                                             bool addedToDatabase = sensorRepo.AddFileToDatabase(measurementReadingDTO);
@@ -154,42 +186,17 @@ namespace ArduinoReader.Sensor
                     {
                         // No errors in file, can be deleted
                         Console.WriteLine("Deleting successfully read files");
-                        
+
                         // Don't delete for now
-                        //File.Delete(sensorReading);
+                        File.Delete(sensorReading);
                     }
                 }
-
-                
-
             }
             else
             {
                 Console.WriteLine("No files to add to database");
             }
 
-
-
-            
-
-            Thread.Sleep(10000);
-
-        }
-
-
-        public void StartSensorDataReader()
-        {
-            _sensorDataWriterWorker.RunWorkerAsync();
-        }
-
-        public void StopSensorDataReader()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void WriteSensorDataToDatabase()
-        {
-            throw new NotImplementedException();
         }
 
         public SensorMeasurementDTO? ConvertToSensorMeasurementDTO(string[] readingToConvert)

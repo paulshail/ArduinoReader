@@ -38,7 +38,7 @@ namespace ArduinoReader.Repository.Implementation
                     measurementValue= measurement.measurementValue
                 });
 
-                _plantDataContext.SaveChangesAsync();
+                _plantDataContext.SaveChanges();
 
                 return true;
             }
